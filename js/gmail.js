@@ -2,8 +2,8 @@
       var apiKey = 'AIzaSyAYPWVJHJgdpcYbuUjCw3MzQ7g6thHtT0w';
       var scopes = 'https://www.googleapis.com/auth/gmail.readonly';
       var emailarr = [];
-      var output = [];
-      this.arr = [];
+      //Array used to store all the datetime of the emails
+      var datetime_output = [];
 
       function handleClientLoad() {
         // Step 2: Reference the API key
@@ -26,6 +26,7 @@
                 resolve(result);
               });
           });
+          //Once we get our lists of email ids, we create a bunch of requests and execute them as a batch
           p1.then(function(result){
             emailarr = result;
             var batch = gapi.client.newBatch();
@@ -34,7 +35,9 @@
             }
             //executes the batch request to get all the email content in sent
             batch.then(function(response){
+              //list of email objects
               var emails = response.result;
+              //parse each email object to retrieve the datetime the email was sent
               for(res in emails){
                 //If our queries get throttled
                 if(emails[res].result.error){
@@ -47,13 +50,12 @@
                       var dt = elems[ind].value.split(/[ ,]+/);
                       var obj = [];
                       obj.push(new Date(elems[ind].value));
-                      output.push(obj);
+                      datetime_output.push(obj);
                     }
                   }
                 }
               }
-              console.log(output);
-              startPlot(output);
+              console.log(datetime_output);
               //Do rendering work here.
             });
     
